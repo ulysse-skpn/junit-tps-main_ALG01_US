@@ -1,0 +1,25 @@
+image: maven:latest
+
+stages:
+  - build-develop
+  
+variables:
+  ## le repositoryId est défini dans le fichier setting.xml par défaut.
+  ## Les variables $INDYLI_NEXUS_USER/$INDYLI_NEXUS_PWD correspondent aux credentials du compte technique
+  ## ⚠️ $INDYLI_NEXUS_PWD doit être MASQUE.
+  MAVEN_CLI_OPTS: >
+    -s ci/settings.xml
+    --batch-mode
+    -DrepositoryId=nexus
+    -Dnexus.username=$INDYLI_NEXUS_USER
+    -Dnexus.password=$INDYLI_NEXUS_PWD
+    -Dmaven.test.skip=true
+    -Dmaven.wagon.http.ssl.insecure=true 
+    -Dmaven.wagon.http.ssl.allowall=true 
+    -Dmaven.wagon.http.ssl.ignore.validity.dates=true
+
+build-develop:
+  stage: build-develop
+  script:
+  #  - echo $MAVEN_CLI_OPTS
+     - mvn clean install $MAVEN_CLI_OPTS

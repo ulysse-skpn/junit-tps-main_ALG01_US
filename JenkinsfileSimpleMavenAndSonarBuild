@@ -1,0 +1,29 @@
+pipeline {
+   agent any
+    stages {
+	
+		stage('Checkout') {
+			steps {
+				checkout scm
+			}
+		}
+		stage('Build Analyse Quality with sonar') {
+			steps {			
+        	  	withSonarQubeEnv(installationName:'indyli-sonarqube') {
+                    // Optionally use a Maven environment you've configured already
+                       withMaven(maven : 'maven-3.5.4') {
+                        sh 'mvn clean -Dmaven.test.skip=true -Dsonar.login=fb183f8c8bda32ec791d762a3e8fe3b4acd91690 package sonar:sonar'
+                        }
+                }
+			}
+		}
+		stage('Deploy') {
+			steps {
+	       // sshagent(credentials : ['indyli-rct-server']) {
+           // sh 'scp  -i /home/dev/.ssh/id_ed25519_rct_indyli -P 2224 /var/lib/jenkins/workspace/With-multi-Branch_master/target/junit-tps-1.0.1-SNAPSHOT.jar rct@198.245.50.85:/srv/appli/jenkins/livrable'
+           sh 'echo Termine le deploiement'
+          // 	 }		
+		    }
+	     }
+	}
+}
